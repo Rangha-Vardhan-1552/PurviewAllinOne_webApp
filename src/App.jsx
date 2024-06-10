@@ -9,6 +9,9 @@ import AddCriminal from './components/AddCriminal';
 import TrafficDepartment from './components/trafficDeparment/TrafficDepartment';
 import AddTrafficDetails from './components/trafficDeparment/AddTrafficDetails';
 import BrandSetup from './components/Brandcomp';
+import Signup from './authentication/Signup';
+import Secretary from './components/Secretariat/Secretary';
+import Addvisitor from './components/Secretariat/Addvisitor';
 function App() {
   return (
     <div className="App">
@@ -21,6 +24,10 @@ function App() {
       <Route path="/criminalAdd" element={<AddCriminal/>}/>
       <Route path="/trafficDetailsAdd" element={<AddTrafficDetails/>}/>
       <Route path="/brandcomp" element={<BrandSetup/>}/>
+      <Route path="/signup" element={<Signup/>}/>
+      <Route path="/secretary" element={<Secretary/>}/>
+      <Route path="/secretary/addvisitor" element={<Addvisitor/>}/>
+
 
       </Routes>
     </div>

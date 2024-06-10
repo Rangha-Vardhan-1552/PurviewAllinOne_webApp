@@ -39,6 +39,7 @@ const TrafficDepartment = () => {
       <div ref={pdfref}>
       <TableComponent />
       </div>
+      
     </div>
   );
 };
