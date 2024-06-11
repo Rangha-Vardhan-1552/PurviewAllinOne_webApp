@@ -166,12 +166,12 @@ export default function CriminalDB() {
                                         {row.parole}
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <Button onClick={() => handleClickOpen(row)} className="bg-gray-600 text-white hover:bg-green-400 font-medium rounded-md">Edit</Button>
+                                        <button onClick={() => handleClickOpen(row)} className="bg-green-600 text-white hover:bg-green-400 font-medium rounded-md p-1 px-4">Edit</button>
                                     </TableCell>
                                     <TableCell className="px-6 py-4">
-                                        <Button onClick={() => handleDelete(row.id)} className="bg-red-600 text-white hover:bg-red-400 font-medium rounded-md">
+                                        <button onClick={() => handleDelete(row.id)} className="bg-red-600 text-white hover:bg-red-400 font-medium rounded-md p-1 px-4">
                                             Delete
-                                        </Button>
+                                        </button>
                                     </TableCell>
                                 </TableRow>
                             ))}

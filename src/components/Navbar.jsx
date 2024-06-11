@@ -3,6 +3,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FiLogIn } from "react-icons/fi";
 import {
   Disclosure,
   DisclosureButton,
@@ -20,7 +21,7 @@ const navigation = [
   { name: 'Dashboard', href: '#', current: true },
   { name: 'For Crime Department', href: '#', current: false },
   { name: 'For Traffic Department', href: '#', current: false },
-  { name: 'About Us', href: '#', current: false },
+  { name: 'About Us', href: '/aboutus', current: false },
 ];
 
 function classNames(...classes) {
@@ -56,7 +57,7 @@ export default function Navbar() {
   };
 
   return (
-    <>
+    <>  
       <Disclosure as="nav" className="bg-gray-800">
         {({ open }) => (
           <>
@@ -100,7 +101,7 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 gap-8">
                   <p className='text-white uppercase '>{user ? user.email : ''}</p>
                   <button
                     type="button"
@@ -111,15 +112,17 @@ export default function Navbar() {
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
-                  {/* Profile dropdown */}
-                  <Menu as="div" className="relative ml-3">
+                  
+                  {
+                    user?(
+                      <Menu as="div" className="relative ml-3">
                     <div>
                       <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                           alt=""
                         />
                       </Menu.Button>
@@ -166,6 +169,16 @@ export default function Navbar() {
                       </Menu.Items>
                     </Transition>
                   </Menu>
+
+                    ):
+                    <div className='flex gap-2 items-center text-white cursor-pointer'>
+                      <FiLogIn/>
+                      <a href='/signin' className='uppercase'>Login</a>
+                    </div> 
+                    
+
+                  }
+                  
                 </div>
               </div>
             </div>

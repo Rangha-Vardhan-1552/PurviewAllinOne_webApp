@@ -13,6 +13,7 @@ import Signup from './authentication/Signup';
 import Secretary from './components/Secretariat/Secretary';
 import Addvisitor from './components/Secretariat/Addvisitor';
 import SignIn from './authentication/Signin';
+import Aboutus from './components/About';
 function App() {
   return (
     <div className="App">
@@ -30,6 +31,7 @@ function App() {
       <Route path="/signin" element={<SignIn/>}/>
       <Route path="/secretary" element={<Secretary/>}/>
       <Route path="/secretary/addvisitor" element={<Addvisitor/>}/>
+      <Route path="/aboutus" element={<Aboutus/>}/>
 
 
       </Routes>
