@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { IoPersonCircle } from "react-icons/io5";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { app, db, auth } from '../firebase';  // Ensure these imports are correct
+import { ToastContainer,toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
+    const navigate= useNavigate()
+    const [message,setMessage] = useState(null)
     const [formData, setFormData] = useState({
-        username: '',
+        displayName: '',
         email: '',
         password: '',
         type: 'BlindPeople'
@@ -22,15 +27,21 @@ export default function Signup() {
         e.preventDefault();
         try {
             const user = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            toast.success('User created successful',{
+                autoClose:2000,
+                onClose:()=>navigate('/signin')
+            })
+            
             console.log(user);
         } catch (error) {
             console.error(error);
+            setMessage(error.message)
         }
     };
 
     console.log(formData);
 
-    const backgroundImage = 'https://images.pexels.com/photos/3183176/pexels-photo-3183176.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+    const backgroundImage = '';
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
@@ -51,38 +62,17 @@ export default function Signup() {
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                         <form className="space-y-6" onSubmit={submitHandler}>
                             <div>
-                                <label htmlFor="type" className="block text-sm font-medium leading-6 text-gray-900">
-                                    Select Department Type
-                                </label>
-                                <div className="mt-2">
-                                    <select
-                                        id="type"
-                                        name="type"
-                                        autoComplete="type"
-                                        onChange={inputHandler}
-                                        value={formData.type}
-                                        required
-                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    >
-                                        <option value='BlindPeople'>Blind People</option>
-                                        <option value='ForTrafficDepartment'>For Traffic Department</option>
-                                        <option value='ForPoliceDepartment'>For Police Department</option>
-                                        <option value='ForCrimeDepartment'>For Crime Department</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
+                                <label htmlFor="displayName" className="block text-sm font-medium leading-6 text-gray-900">
                                     Username
                                 </label>
                                 <div className="mt-2">
                                     <input
-                                        id="username"
+                                        id="displayName"
                                         name="username"
                                         type="text"
-                                        autoComplete="username"
+                                        autoComplete="displayName"
                                         onChange={inputHandler}
-                                        value={formData.username}
+                                        value={formData.displayName}
                                         required
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
@@ -132,6 +122,11 @@ export default function Signup() {
                                 </button>
                             </div>
                         </form>
+                        {message && (
+                        <div className='mt-4 text-center text-sm text-red-600'>
+                            {message}
+                        </div>
+                        )}
                         <p className="mt-10 text-center text-sm mb-3">
                             Already a member?{' '}
                             <a href="/signin" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
@@ -140,6 +135,7 @@ export default function Signup() {
                         </p>
                     </div>
                 </div>
+                <ToastContainer/>
             </div>
         </>
     );
