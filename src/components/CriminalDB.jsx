@@ -96,7 +96,7 @@ export default function CriminalDB() {
 
     return (
         <>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-10">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg py-36 ">
                 <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
                     <div className='flex gap-2  items-center'>
                         <div className='flex  gap-2 items-center'>

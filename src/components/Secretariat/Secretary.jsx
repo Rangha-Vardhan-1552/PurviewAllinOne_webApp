@@ -35,7 +35,7 @@ export default function Secretary() {
 
     return (
         <>
-            <div className="flex flex-col p-6 gap-3">
+            <div className="flex flex-col p-6 gap-3 py-28">
                 <div className="flex flex-col text-center">
                     <h1 className="text-2xl md:text-4xl text-blue-800 font-semibold">GOVERNMENT OF TELANGANA STATE</h1>
                     <h3 className="text-lg md:text-2xl font-semibold">Secretariat Visitor's Entry Permit</h3>

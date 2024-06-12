@@ -1,149 +1,86 @@
-import React, { useState } from 'react';
-import { db, storage } from '../firebase'; // Make sure to import the storage from your firebase config
-import { ref as dbRef, push, set } from 'firebase/database';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { useState,useEffect } from "react";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Dashboard() {
-    const [formData, setFormData] = useState({
-        caseNumber: '',
-        crime: '',
-        imageUrl: '',
-        name: '',
-        paroleStatus: ''
-    });
-
-    const [imageFile, setImageFile] = useState(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [successMessage, setSuccessMessage] = useState('');
-
-    const inputChangeHandler = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
+const [user,setUser] = useState(null)
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+          setUser(currentUser);
         });
-    };
-
-    const fileChangeHandler = (e) => {
-        setImageFile(e.target.files[0]);
-    };
-
-    const submitHandler = async (e) => {
-        e.preventDefault();
-        try {
-            let imageUrl = '';
-            if (imageFile) {
-                const imageRef = storageRef(storage, `images/${imageFile.name}`);
-                const uploadTask = uploadBytesResumable(imageRef, imageFile);
-
-                uploadTask.on(
-                    'state_changed',
-                    (snapshot) => {
-                        // Track progress
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        setUploadProgress(progress);
-                        console.log('Upload is ' + progress + '% done');
-                    },
-                    (error) => {
-                        // Handle unsuccessful uploads
-                        console.error('Error uploading file: ', error);
-                    },
-                    async () => {
-                        // Handle successful uploads on complete
-                        imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                        const newEntry = {
-                            ...formData,
-                            imageUrl
-                        };
-
-                        const newEntryRef = push(dbRef(db, 'facepr/'));
-                        await set(newEntryRef, newEntry);
-
-                        console.log('Successfully added to database');
-                        setFormData({
-                            caseNumber: '',
-                            crime: '',
-                            imageUrl: '',
-                            name: '',
-                            paroleStatus: ''
-                        });
-                        setImageFile(null);
-                        setUploadProgress(0);
-                        setSuccessMessage('Successfully added to database');
-                    }
-                );
-            } else {
-                const newEntry = {
-                    ...formData,
-                };
-
-                const newEntryRef = push(dbRef(db, 'facepr/'));
-                await set(newEntryRef, newEntry);
-
-                console.log('Successfully added to database');
-                setFormData({
-                    caseNumber: '',
-                    crime: '',
-                    imageUrl: '',
-                    name: '',
-                    paroleStatus: ''
-                });
-                setUploadProgress(0);
-                setSuccessMessage('Successfully added to database');
-            }
-        } catch (error) {
-            console.error('Error adding document: ', error);
-        }
-    };
-
+        return () => unsubscribe();
+      }, []);
     return (
-        <div>
-            <div>Criminal Data</div>
-            <form onSubmit={submitHandler}>
-                <div>
-                    <label>Case Number:</label>
-                    <input
-                        name='caseNumber'
-                        value={formData.caseNumber}
-                        onChange={inputChangeHandler}
-                    />
+      <div className="h-screen w-full">
+        <div className="relative isolate overflow-hidden bg-gray-900 shadow-2xl h-full flex items-center justify-center">
+          <svg
+            viewBox="0 0 1024 1024"
+            className="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-y-1/2 [mask-image:radial-gradient(closest-side,white,transparent)] sm:left-full sm:-ml-80 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2 lg:translate-y-0"
+            aria-hidden="true"
+          >
+            <circle cx={512} cy={512} r={512} fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fillOpacity="0.7" />
+            <defs>
+              <radialGradient id="759c1415-0410-454c-8f7c-9a820de03641">
+                <stop stopColor="#7775D6" />
+                <stop offset={1} stopColor="#E935C1" />
+              </radialGradient>
+            </defs>
+          </svg>
+          <div className="relative z-10 flex flex-col lg:flex-row lg:gap-x-20 lg:px-24 items-center justify-center text-center lg:text-left">
+            <div className="max-w-md lg:max-w-none lg:flex-1">
+              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-3xl">
+              Streamline Operations with Advanced 
+                <br />
+                Criminal, Traffic, and Gate Entry Systems
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-gray-300">
+              Leverage AI-driven insights to enhance security, optimize traffic flow, and streamline visitor tracking.
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
+                <a
+                  href={user?'/home':'/signin'}
+                  className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Get started
+                </a>
+                <a href="/aboutus" className="text-sm font-semibold leading-6 text-white">
+                  Learn more <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+            <div className="relative mt-16 lg:mt-0 lg:flex-1 lg:h-auto h-80 ">
+              <div className="flex gap-4 ">
+                <div className="flex flex-col gap-4 py-36">
+                  <img
+                    className="rounded-md h-[250px] object-cover"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzb4SIXD47QAxN6p3V53Zc_qxKX3G91pICVzf0zbY9qe9AlrHa1Mj2okMd-DJSSPrZf4w&usqp=CAU"
+                    alt="image1"
+                  />
                 </div>
-                <div>
-                    <label>Crime:</label>
-                    <input
-                        name='crime'
-                        value={formData.crime}
-                        onChange={inputChangeHandler}
-                    />
+                <div className="flex flex-col gap-4">
+                  <img
+                    className="rounded-md h-[250px] object-cover"
+                    src="https://www.shutterstock.com/image-vector/automated-license-plate-recognition-parking-600nw-2224544275.jpg"
+                    alt="image3"
+                  />
+                  <img
+                    className="rounded-md h-[250px] object-cover"
+                    src="https://thumbs.dreamstime.com/b/young-man-passing-automated-passport-border-control-gates-flat-vector-illustration-young-man-passing-automated-171347057.jpg"
+                    alt="image4"
+                  />
                 </div>
-                <div>
-                    <label>Image:</label>
-                    <input
-                        type='file'
-                        accept='image/*'
-                        onChange={fileChangeHandler}
-                    />
+                <div className="flex flex-col gap-4 py-4">
+                  <img
+                    className="rounded-md h-[250px] object-cover"
+                    src="https://www.fujitsu.com/downloads/blog/fgb/2021-01-20/fgb_20210120_01_index_pic_1.jpg"
+                    alt="image6"
+                  />
                 </div>
-                <div>
-                    <label>Name:</label>
-                    <input
-                        name='name'
-                        value={formData.name}
-                        onChange={inputChangeHandler}
-                    />
-                </div>
-                <div>
-                    <label>Parole Status:</label>
-                    <input
-                        name='paroleStatus'
-                        value={formData.paroleStatus}
-                        onChange={inputChangeHandler}
-                    />
-                </div>
-                <button type='submit'>Submit</button>
-            </form>
-            {uploadProgress > 0 && <div>Upload Progress: {uploadProgress}%</div>}
-            {successMessage && <div>{successMessage}</div>}
+              </div>
+            </div>
+          </div>
         </div>
-        
+      </div>
     );
-}
+  }
+  

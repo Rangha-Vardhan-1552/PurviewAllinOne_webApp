@@ -27,7 +27,7 @@ const TrafficDepartment = () => {
     )
   };
   return (
-    <div className="container">
+    <div className="container py-36">
       <div className="header">
         <div className="logo">
           <img src={police} alt="LOGO" />
