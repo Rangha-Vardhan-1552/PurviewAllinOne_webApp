@@ -1,17 +1,28 @@
-const links = [
-    { name: 'Demo Video', href: '#' },
-    { name: 'Services', href: '#' },
-    // { name: 'Our values', href: '#' },
-    // { name: 'Meet our leadership', href: '#' },
-  ]
-  const stats = [
-    { name: 'users', value: '1M+' },
-    { name: 'Downloads', value: '300+' },
-    { name: 'unlimited Sevices', value: '40' },
-    { name: 'Paid time off', value: 'Unlimited' },
-  ]
+import { useState } from "react"
+import { auth } from "../../firebase"
+import { onAuthStateChanged } from "firebase/auth"
+
+
   
   export default function ForCrimeDepart() {
+    const [user,setUser] = useState()
+    const links = [
+      { name: 'Demo Video', href: '#' },
+      { name: 'Services', href: '#' },
+      { name: 'Dashboard', href: user?'/home' :'/signin'},
+      // { name: 'Meet our leadership', href: '#' },
+    ]
+    const stats = [
+      { name: 'users', value: '1M+' },
+      { name: 'Downloads', value: '300+' },
+      { name: 'unlimited Sevices', value: '40' },
+      { name: 'Paid time off', value: 'Unlimited' },
+    ]
+
+    onAuthStateChanged(auth,(currentUser)=>{
+      setUser(currentUser)
+    })
+    
     return (
       <div className="relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32">
         <img

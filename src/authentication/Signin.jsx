@@ -40,7 +40,7 @@ const navigate = useNavigate()
   const backgroundImage=''
   return (
     <>
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8" style={{backgroundImage:`url(${backgroundImage})`,
+        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 lg:py-28 " style={{backgroundImage:`url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center'

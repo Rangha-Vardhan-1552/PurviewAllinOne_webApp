@@ -48,7 +48,7 @@ const [user,setUser] = useState(null)
                 </a>
               </div>
             </div>
-            <div className="relative mt-16 lg:mt-0 lg:flex-1 lg:h-auto h-80 ">
+            <div className="relative mt-6 lg:mt-28 lg:flex-1 lg:h-auto h-80 ">
               <div className="flex gap-4 ">
                 <div className="flex flex-col gap-4 py-36">
                   <img

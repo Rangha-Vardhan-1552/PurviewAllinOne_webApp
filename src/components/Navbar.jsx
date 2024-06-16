@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 const navigation = [
   { name: 'Home', href: '/MainHome', current: true },
   { name: 'For Crime Department', href: '/ForCrimeDepart', current: false },
-  { name: 'For Traffic Department', href: '#', current: false },
+  { name: 'For Traffic Department', href: '/ForTrafficDepart', current: false },
   { name: 'About Us', href: '/aboutus', current: false },
 ];
 

@@ -55,7 +55,7 @@ export default function CriminalDB() {
                 crime: editCriminal.crime,
                 title: editCriminal.title,
                 imageUrl: editCriminal.imageUrl,
-                parole: editCriminal.parole
+                parole: editCriminal.parole,
             };
             const updatedJsonString = JSON.stringify(data);
             await uploadString(fileRef, updatedJsonString, 'raw');
@@ -81,7 +81,9 @@ export default function CriminalDB() {
                 location:item.location,
                 id:item.id,
                 distance:item.distance,
-                crop:item.crop
+                crop:item.crop,
+                descriptors:item.descriptors
+
 
             }])));
             const storage = getStorage();
