@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
 import { storage, ref, getDownloadURL } from '../src/firebase';
+import { uploadBytes } from 'firebase/storage';
 
 const FaceRecognition = () => {
   const videoRef = useRef();
@@ -8,6 +9,13 @@ const FaceRecognition = () => {
   const [facesData, setFacesData] = useState([]);
   const [recognizedFaces, setRecognizedFaces] = useState([]);
   const [crimeDB, setCrimeDB] = useState();
+  const buzzerRef = useRef(null);
+
+  useEffect(() => {
+    buzzerRef.current = new Audio('/audio/dangerAlarm.mp3');
+    buzzerRef.current.addEventListener('canplaythrough', () => console.log('Audio loaded successfully.'));
+    buzzerRef.current.addEventListener('error', (e) => console.error('Error loading audio file:', e));
+  }, []);
 
   useEffect(() => {
     const loadModels = async () => {
@@ -57,6 +65,14 @@ const FaceRecognition = () => {
 
           drawResults(recognized);
           setRecognizedFaces(recognized);
+
+          recognized.forEach(({ detection, match }) => {
+            if (match.label !== 'unknown') {
+              captureAndSaveImage(detection.detection.box, match.label);
+              buzzerRef.current.play().catch(err => console.error('Error playing audio:', err)); // Play buzzer sound when a criminal is detected
+            }
+          });
+
         } else {
           console.log("No detections");
           drawResults([]);
@@ -82,7 +98,7 @@ const FaceRecognition = () => {
         throw new Error('Failed to fetch faces data');
       }
       const jsonData = await response.json();
-      setCrimeDB(jsonData)
+      setCrimeDB(jsonData);
       return jsonData;
     } catch (error) {
       console.error('Error fetching faces data:', error.message);
@@ -100,11 +116,8 @@ const FaceRecognition = () => {
             .withFaceLandmarks()
             .withFaceDescriptors();
 
-          // console.log("detects", detections);
           if (detections.length > 0) {
             const descriptors = [detections[0].descriptor];
-            // console.log("descriptor", descriptors);
-
             return new faceapi.LabeledFaceDescriptors(face.title, descriptors);
           } else {
             return null;
@@ -123,21 +136,21 @@ const FaceRecognition = () => {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     faceapi.matchDimensions(canvas, videoRef.current);
-  
+
     if (recognized.length === 0) {
       ctx.font = '24px Arial';
       ctx.fillStyle = 'green';
       ctx.fillText('Unknown', canvas.width / 2 - 50, canvas.height / 2);
       return;
     }
-  
+
     recognized.forEach(({ detection, match }) => {
       const box = detection.detection.box;
       const { label, distance } = match;
-  
+
       ctx.beginPath();
       ctx.lineWidth = '2';
-  
+
       if (label === 'unknown') {
         ctx.strokeStyle = 'green';
         ctx.fillStyle = 'green';
@@ -145,28 +158,27 @@ const FaceRecognition = () => {
         ctx.strokeStyle = 'red';
         ctx.fillStyle = 'red';
       }
-  
+
       ctx.rect(box.x, box.y, box.width, box.height);
       ctx.stroke();
-  
+
       ctx.font = '16px Arial';
-      // ctx.fillStyle = 'red';
-  
+
       if (label === 'unknown') {
         ctx.fillStyle = 'green';
         ctx.fillText('Unknown', box.x, box.y - 10, box.width, box.height);
       } else {
         ctx.fillText(`${label} (${distance.toFixed(2)})`, box.x, box.y - 10);
-  
+
         const criminalData = facesData.find(face => face.label === label);
-  
+
         Object.values(crimeDB).forEach((eachCrime) => {
           if (eachCrime.title === criminalData.label) {
             ctx.fillText(`Name: ${eachCrime.title}`, box.x, box.y + box.height + 20);
             ctx.fillText(`Case Number: ${eachCrime.caseNumber}`, box.x, box.y + box.height + 40);
             ctx.fillText(`Crime: ${eachCrime.crime}`, box.x, box.y + box.height + 60);
             ctx.fillText(`Parole: ${eachCrime.parole}`, box.x, box.y + box.height + 80);
-  
+
             const imageObj = new Image();
             imageObj.onload = function () {
               ctx.drawImage(imageObj, box.x + box.width + 10, box.y, 100, 100);
@@ -177,7 +189,27 @@ const FaceRecognition = () => {
       }
     });
   };
-  
+
+  const captureAndSaveImage = async (box, label) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const video = videoRef.current;
+
+    canvas.width = box.width;
+    canvas.height = box.height;
+
+    ctx.drawImage(video, box.x, box.y, box.width, box.height, 0, 0, box.width, box.height);
+
+    canvas.toBlob(async (blob) => {
+      const storageRef = ref(storage, `detectedCriminal/${label}_${Date.now()}.png`);
+      try {
+        await uploadBytes(storageRef, blob);
+        console.log(`Image of ${label} saved successfully.`);
+      } catch (error) {
+        console.error('Error saving image:', error.message);
+      }
+    }, 'image/png');
+  };
 
   return (
     <div>
