@@ -100,10 +100,10 @@ const FaceRecognition = () => {
             .withFaceLandmarks()
             .withFaceDescriptors();
 
-          console.log("detects", detections);
+          // console.log("detects", detections);
           if (detections.length > 0) {
             const descriptors = [detections[0].descriptor];
-            console.log("descriptor", descriptors);
+            // console.log("descriptor", descriptors);
 
             return new faceapi.LabeledFaceDescriptors(face.title, descriptors);
           } else {
@@ -123,49 +123,50 @@ const FaceRecognition = () => {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     faceapi.matchDimensions(canvas, videoRef.current);
-
+  
     if (recognized.length === 0) {
       ctx.font = '24px Arial';
-      ctx.fillStyle = 'red';
+      ctx.fillStyle = 'green';
       ctx.fillText('Unknown', canvas.width / 2 - 50, canvas.height / 2);
       return;
     }
-
+  
     recognized.forEach(({ detection, match }) => {
       const box = detection.detection.box;
       const { label, distance } = match;
-
+  
       ctx.beginPath();
       ctx.lineWidth = '2';
-      ctx.strokeStyle = 'red';
+  
+      if (label === 'unknown') {
+        ctx.strokeStyle = 'green';
+        ctx.fillStyle = 'green';
+      } else {
+        ctx.strokeStyle = 'red';
+        ctx.fillStyle = 'red';
+      }
+  
       ctx.rect(box.x, box.y, box.width, box.height);
       ctx.stroke();
-
+  
       ctx.font = '16px Arial';
-      ctx.fillStyle = 'red';
-
+      // ctx.fillStyle = 'red';
+  
       if (label === 'unknown') {
-        // ctx.lineWidth = '2';
-        // ctx.strokeStyle = 'red';
-        // ctx.rect(box.x, box.y, box.width, box.height);
-        // ctx.stroke();
-
-        // ctx.font = '16px Arial';
-        // ctx.fillStyle = 'red';
-        ctx.fillText('Unknown', box.x, box.y - 10,box.width,box.height);
+        ctx.fillStyle = 'green';
+        ctx.fillText('Unknown', box.x, box.y - 10, box.width, box.height);
       } else {
         ctx.fillText(`${label} (${distance.toFixed(2)})`, box.x, box.y - 10);
-
+  
         const criminalData = facesData.find(face => face.label === label);
-        // console.log("crimeData", crimeDB);
-
-        Object.values(crimeDB).map((eachCrime) => {
+  
+        Object.values(crimeDB).forEach((eachCrime) => {
           if (eachCrime.title === criminalData.label) {
             ctx.fillText(`Name: ${eachCrime.title}`, box.x, box.y + box.height + 20);
             ctx.fillText(`Case Number: ${eachCrime.caseNumber}`, box.x, box.y + box.height + 40);
             ctx.fillText(`Crime: ${eachCrime.crime}`, box.x, box.y + box.height + 60);
             ctx.fillText(`Parole: ${eachCrime.parole}`, box.x, box.y + box.height + 80);
-
+  
             const imageObj = new Image();
             imageObj.onload = function () {
               ctx.drawImage(imageObj, box.x + box.width + 10, box.y, 100, 100);
@@ -176,6 +177,7 @@ const FaceRecognition = () => {
       }
     });
   };
+  
 
   return (
     <div>
